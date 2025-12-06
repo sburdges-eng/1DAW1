@@ -192,3 +192,49 @@ pub async fn check_python_server() -> Result<Value, String> {
         "url": format!("http://127.0.0.1:{}", PYTHON_API_PORT)
     }))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::sync::Arc;
+    use tokio::sync::Mutex;
+
+    #[test]
+    fn test_find_python_interpreter() {
+        // Should find system Python in development
+        let result = find_python_interpreter();
+        // In test environment, should at least try to find python3
+        assert!(result.is_some() || std::env::var("CI").is_ok());
+    }
+
+    #[test]
+    fn test_find_api_script() {
+        // Should find API script in development
+        let result = find_api_script();
+        // In test environment, might not find it if not in project root
+        // This is OK - the test verifies the function doesn't panic
+        let _ = result;
+    }
+
+    #[tokio::test]
+    async fn test_check_server_health_when_down() {
+        // When server is not running, should return false
+        let result = check_server_health().await;
+        // In test environment without server, should be false
+        assert!(!result);
+    }
+
+    #[tokio::test]
+    async fn test_stop_server_when_not_running() {
+        // Stopping a non-existent server should succeed
+        let server_handle: Arc<Mutex<Option<Child>>> = Arc::new(Mutex::new(None));
+        let result = stop_server(server_handle).await;
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_python_api_port_constant() {
+        // Verify port constant is set correctly
+        assert_eq!(PYTHON_API_PORT, 8000);
+    }
+}
