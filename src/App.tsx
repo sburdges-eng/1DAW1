@@ -2,6 +2,11 @@ import { useState, useEffect } from "react";
 import { useMusicBrain } from "./hooks/useMusicBrain";
 import { EmotionWheel, SelectedEmotion } from "./components/EmotionWheel";
 import { MidiPlayer } from "./components/MidiPlayer";
+import { Mixer } from "./components/Mixer";
+import { Timeline } from "./components/Timeline";
+import { TransportControls } from "./components/TransportControls";
+import { InterrogatorChat } from "./components/InterrogatorChat";
+import { RuleBreaker } from "./components/RuleBreaker";
 import "./App.css";
 
 function App() {
@@ -21,6 +26,11 @@ function App() {
     tempo?: number;
     progression?: string;
   } | null>(null);
+
+  // Transport state
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [tempo, setTempo] = useState(120);
 
   // Always call hooks unconditionally
   const musicBrain = useMusicBrain();
@@ -241,18 +251,34 @@ function App() {
       </div>
 
       {sideA ? (
-        <div className="side-a">
-          <h2>Side A: Professional DAW</h2>
-          <p>Mixer, Timeline, Transport controls coming soon...</p>
-          <div className="test-buttons">
-            <button
-              onClick={handleGenerateMusic}
-              disabled={loading || !selectedEmotion}
-              title={!selectedEmotion ? "Please select an emotion first" : ""}
-            >
-              {loading ? "Generating..." : selectedEmotion ? `Test Generate Music (${selectedEmotion.sub})` : "Test Generate Music (Select Emotion First)"}
-            </button>
+        <div className="side-a" style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 80px)' }}>
+          {/* Main DAW Layout */}
+          <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+            {/* Timeline Area */}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+              <Timeline
+                tempo={tempo}
+                timeSignature={[4, 4]}
+              />
+            </div>
+
+            {/* Mixer Panel */}
+            <div style={{ width: '350px', borderLeft: '1px solid rgba(255,255,255,0.1)' }}>
+              <Mixer />
+            </div>
           </div>
+
+          {/* Transport Controls */}
+          <TransportControls
+            tempo={tempo}
+            timeSignature={[4, 4]}
+            isPlaying={isPlaying}
+            isRecording={isRecording}
+            onPlay={() => setIsPlaying(true)}
+            onPause={() => setIsPlaying(false)}
+            onStop={() => { setIsPlaying(false); setIsRecording(false); }}
+            onRecord={() => setIsRecording(!isRecording)}
+          />
         </div>
       ) : (
         <div className="side-b">
@@ -268,6 +294,16 @@ function App() {
                 <EmotionWheel emotions={emotions} onEmotionSelected={setSelectedEmotion} />
               </div>
             )}
+          </div>
+
+          <div className="rulebreaker-section" style={{ marginBottom: '20px', padding: '20px', border: '1px solid #ddd', borderRadius: '8px', backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
+            <h3>Rule Breaker</h3>
+            <RuleBreaker
+              selectedEmotion={selectedEmotion?.base}
+              onRuleSelected={(rule) => {
+                console.log('Rule selected:', rule);
+              }}
+            />
           </div>
 
           <div className="ghostwriter-section">
@@ -316,9 +352,19 @@ function App() {
 
           <div className="interrogator-section">
             <h3>Interrogator</h3>
-            <button onClick={handleInterrogate} disabled={loading}>
-              {loading ? "Interrogating..." : "Start Interrogation"}
-            </button>
+            <InterrogatorChat
+              onReady={(intent) => {
+                console.log('Intent ready from interrogator:', intent);
+                // Auto-populate emotion if we got one from interrogation
+                if (intent.base_emotion && intent.intensity) {
+                  setSelectedEmotion({
+                    base: intent.base_emotion,
+                    intensity: intent.intensity,
+                    sub: intent.specific_emotion || intent.base_emotion
+                  });
+                }
+              }}
+            />
           </div>
         </div>
       )}
