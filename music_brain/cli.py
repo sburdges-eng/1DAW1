@@ -849,8 +849,14 @@ def cmd_learn(args):
         else:
             print(f"\n=== Learning Resources for {instrument.title()} ===\n")
 
+        # Validate difficulty level if provided
+        level = args.level or 1
+        if level < 1 or level > 10:
+            print(f"Error: Difficulty level must be between 1 and 10, got {level}")
+            return 1
+
         # Get sources
-        sources = get_recommended_sources(instrument, difficulty=args.level or 1)
+        sources = get_recommended_sources(instrument, difficulty=level)
 
         if not sources:
             print(f"\nNo specific sources found for '{instrument}'.")
@@ -880,6 +886,17 @@ def cmd_learn(args):
         current = args.current or 1
         target = args.target or 5
         hours = args.hours or 5.0
+
+        # Validate difficulty levels are within valid range (1-10)
+        if current < 1 or current > 10:
+            print(f"Error: Current level must be between 1 and 10, got {current}")
+            return 1
+        if target < 1 or target > 10:
+            print(f"Error: Target level must be between 1 and 10, got {target}")
+            return 1
+        if current > target:
+            print(f"Error: Current level ({current}) cannot be greater than target level ({target})")
+            return 1
 
         inst = get_instrument(instrument)
         if inst:
@@ -936,6 +953,11 @@ def cmd_learn(args):
         topic = args.topic
         action = args.action or 'explain'
         difficulty = args.level or 5
+
+        # Validate difficulty level is within valid range (1-10)
+        if difficulty < 1 or difficulty > 10:
+            print(f"Error: Difficulty level must be between 1 and 10, got {difficulty}")
+            return 1
 
         # Create a default student profile if needed
         student = None
