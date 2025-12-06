@@ -5,8 +5,13 @@ use tauri::command;
 pub struct EmotionalIntent {
     pub core_wound: Option<String>,
     pub core_desire: Option<String>,
-    pub emotional_intent: String,
+    #[serde(default)]
+    pub emotional_intent: Option<String>,  // Legacy field
     pub technical: Option<serde_json::Value>,
+    // New format: base_emotion, intensity, specific_emotion
+    pub base_emotion: Option<String>,
+    pub intensity: Option<String>,
+    pub specific_emotion: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

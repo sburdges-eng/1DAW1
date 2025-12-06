@@ -17,12 +17,6 @@ interface EmotionData {
   };
 }
 
-export interface SelectedEmotion {
-  base: string;
-  intensity: string;
-  sub: string;
-}
-
 interface EmotionWheelProps {
   emotions: EmotionData | null;
   onEmotionSelected: (emotion: SelectedEmotion | null) => void;

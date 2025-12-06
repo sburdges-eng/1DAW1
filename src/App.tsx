@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { useMusicBrain } from "./hooks/useMusicBrain";
 import { EmotionWheel, SelectedEmotion } from "./components/EmotionWheel";
+import { MidiPlayer } from "./components/MidiPlayer";
 import "./App.css";
 
 function App() {
   console.log("App: Component rendering");
-  
+
   const [sideA, setSideA] = useState(true);
   const [emotions, setEmotions] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -13,12 +14,19 @@ function App() {
   const [apiStatus, setApiStatus] = useState<'checking' | 'online' | 'offline'>('checking');
   const [selectedEmotion, setSelectedEmotion] = useState<SelectedEmotion | null>(null);
   const [generatedMidiPath, setGeneratedMidiPath] = useState<string | null>(null);
-  
+  const [generatedMidiData, setGeneratedMidiData] = useState<string | null>(null);
+  const [musicConfig, setMusicConfig] = useState<{
+    key?: string;
+    mode?: string;
+    tempo?: number;
+    progression?: string;
+  } | null>(null);
+
   // Always call hooks unconditionally
   const musicBrain = useMusicBrain();
   const { getEmotions, generateMusic, interrogate } = musicBrain;
   console.log("App: useMusicBrain hook initialized");
-  
+
   // Initialize Tauri API check and Music Brain API status
   useEffect(() => {
     console.log("App: useEffect running, checking Tauri API");
@@ -44,7 +52,7 @@ function App() {
         console.warn("App: Music Brain API is offline:", error);
       }
     };
-    
+
     checkApiStatus();
     // Check API status every 30 seconds
     const interval = setInterval(checkApiStatus, 30000);
@@ -81,33 +89,45 @@ function App() {
     setLoading(true);
     setError(null);
     try {
-      // Build emotional intent from selected emotion or use default
-      const emotionalIntent = selectedEmotion 
-        ? `${selectedEmotion.base} (${selectedEmotion.intensity}): ${selectedEmotion.sub}`
-        : "grief hidden as love";
-      
+      if (!selectedEmotion) {
+        setError('Please select an emotion first');
+        setLoading(false);
+        return;
+      }
+
+      // Use new format: base_emotion, intensity, specific_emotion
       const result = await generateMusic({
         intent: {
-          emotional_intent: emotionalIntent,
+          base_emotion: selectedEmotion.base,
+          intensity: selectedEmotion.intensity,
+          specific_emotion: selectedEmotion.sub,
+          // Keep technical for overrides if needed
           technical: {
-            key: "F major",
-            bpm: 82,
-            progression: ["F", "C", "Am", "Dm"],
-            genre: "lo-fi bedroom emo"
+            // Let emotion_mapper determine these, but allow overrides
           }
         }
       });
       setApiStatus('online');
       console.log('Music generated:', result);
-      
-      // Extract MIDI path from result
+
+      // Extract MIDI data and path from result
+      const midiData = (result as any)?.midi_data || null;
       const midiPath = (result as any)?.midi_path || null;
+      const resultMusicConfig = (result as any)?.music_config || null;
+
       setGeneratedMidiPath(midiPath);
-      
-      if (midiPath) {
-        alert(`Music generated! MIDI file: ${midiPath}`);
+      setGeneratedMidiData(midiData);
+      setMusicConfig(resultMusicConfig);
+
+      if (resultMusicConfig) {
+        console.log('Music config:', resultMusicConfig);
+      }
+
+      if (midiData || midiPath) {
+        // Success - MIDI is available for download
+        console.log('MIDI generated successfully');
       } else {
-        alert('Music generated! Check console for details.');
+        console.warn('MIDI generation completed but no MIDI data/path returned');
       }
     } catch (error) {
       console.error('Error generating music:', error);
@@ -123,6 +143,36 @@ function App() {
     }
   };
 
+  const handleDownloadMidi = () => {
+    if (!generatedMidiData) {
+      setError('No MIDI data available to download');
+      return;
+    }
+
+    try {
+      // Convert base64 to blob
+      const binaryString = atob(generatedMidiData);
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      const blob = new Blob([bytes], { type: 'audio/midi' });
+
+      // Create download link
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `generated_music_${Date.now()}.mid`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading MIDI:', error);
+      setError('Failed to download MIDI file');
+    }
+  };
+
   const handleInterrogate = async () => {
     setLoading(true);
     setError(null);
@@ -132,7 +182,7 @@ function App() {
       if (selectedEmotion) {
         message = `I want to write a song about ${selectedEmotion.base} (${selectedEmotion.intensity}): ${selectedEmotion.sub}`;
       }
-      
+
       const result = await interrogate({
         message: message
       });
@@ -164,9 +214,9 @@ function App() {
       <div className="cassette-header">
         <h1>iDAW - Kelly Project</h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
             gap: '8px',
             padding: '5px 10px',
             borderRadius: '4px',
@@ -195,15 +245,19 @@ function App() {
           <h2>Side A: Professional DAW</h2>
           <p>Mixer, Timeline, Transport controls coming soon...</p>
           <div className="test-buttons">
-            <button onClick={handleGenerateMusic} disabled={loading}>
-              {loading ? "Generating..." : "Test Generate Music"}
+            <button
+              onClick={handleGenerateMusic}
+              disabled={loading || !selectedEmotion}
+              title={!selectedEmotion ? "Please select an emotion first" : ""}
+            >
+              {loading ? "Generating..." : selectedEmotion ? `Test Generate Music (${selectedEmotion.sub})` : "Test Generate Music (Select Emotion First)"}
             </button>
           </div>
         </div>
       ) : (
         <div className="side-b">
           <h2>Side B: Therapeutic Interface</h2>
-          
+
           <div className="emotion-section">
             <h3>Emotion Wheel (6×6×6)</h3>
             <button onClick={handleGetEmotions} disabled={loading}>
@@ -223,20 +277,40 @@ function App() {
                 <strong>Selected:</strong> {selectedEmotion.base} → {selectedEmotion.intensity} → {selectedEmotion.sub}
               </div>
             )}
-            <button 
-              onClick={handleGenerateMusic} 
+            <button
+              onClick={handleGenerateMusic}
               disabled={loading || !selectedEmotion}
               title={!selectedEmotion ? "Please select an emotion first" : ""}
             >
               {loading ? "Generating..." : selectedEmotion ? `Generate Music (${selectedEmotion.sub})` : "Generate Music (Select Emotion First)"}
             </button>
-            {generatedMidiPath && (
-              <div style={{ marginTop: '10px', padding: '10px', backgroundColor: 'rgba(76, 175, 80, 0.1)', borderRadius: '4px', border: '1px solid #4caf50' }}>
-                <strong>✅ MIDI Generated:</strong>
-                <div style={{ marginTop: '5px', fontSize: '0.9em', fontFamily: 'monospace', wordBreak: 'break-all' }}>
-                  {generatedMidiPath}
-                </div>
-              </div>
+            {(generatedMidiPath || generatedMidiData) && (
+              <>
+                <MidiPlayer
+                  midiData={generatedMidiData}
+                  midiPath={generatedMidiPath}
+                  musicConfig={musicConfig}
+                />
+                {generatedMidiData && (
+                  <div style={{ marginTop: '10px' }}>
+                    <button
+                      onClick={handleDownloadMidi}
+                      style={{
+                        padding: '8px 16px',
+                        backgroundColor: '#4caf50',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '0.9em',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      📥 Download MIDI
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </div>
 
