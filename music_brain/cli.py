@@ -77,6 +77,38 @@ def get_arrangement_module():
     return generate_arrangement, ArrangementGenerator
 
 
+def get_learning_module():
+    from music_brain.learning import (
+        DifficultyLevel, SkillCategory, Curriculum, LearningPath, CurriculumBuilder,
+        ResourceFetcher, KNOWN_SOURCES, get_recommended_sources, generate_learning_plan,
+        InstrumentFamily, Instrument, INSTRUMENTS, get_instrument, get_instruments_by_family,
+        get_beginner_instruments, TeachingStyle, StudentProfile, AdaptiveTeacher,
+        PedagogyEngine, generate_ai_teaching_prompt,
+    )
+    return {
+        'DifficultyLevel': DifficultyLevel,
+        'SkillCategory': SkillCategory,
+        'Curriculum': Curriculum,
+        'LearningPath': LearningPath,
+        'CurriculumBuilder': CurriculumBuilder,
+        'ResourceFetcher': ResourceFetcher,
+        'KNOWN_SOURCES': KNOWN_SOURCES,
+        'get_recommended_sources': get_recommended_sources,
+        'generate_learning_plan': generate_learning_plan,
+        'InstrumentFamily': InstrumentFamily,
+        'Instrument': Instrument,
+        'INSTRUMENTS': INSTRUMENTS,
+        'get_instrument': get_instrument,
+        'get_instruments_by_family': get_instruments_by_family,
+        'get_beginner_instruments': get_beginner_instruments,
+        'TeachingStyle': TeachingStyle,
+        'StudentProfile': StudentProfile,
+        'AdaptiveTeacher': AdaptiveTeacher,
+        'PedagogyEngine': PedagogyEngine,
+        'generate_ai_teaching_prompt': generate_ai_teaching_prompt,
+    }
+
+
 def cmd_extract(args):
     """Extract groove from MIDI file."""
     extract_groove, _ = get_groove_module()
