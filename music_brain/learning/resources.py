@@ -800,6 +800,14 @@ def generate_learning_plan(
 
     Returns a structured plan with recommended sources and timeline.
     """
+    # Validate level ranges (1-10 for DifficultyLevel enum)
+    if current_level < 1 or current_level > 10:
+        raise ValueError(f"current_level must be between 1 and 10, got {current_level}")
+    if target_level < 1 or target_level > 10:
+        raise ValueError(f"target_level must be between 1 and 10, got {target_level}")
+    if current_level > target_level:
+        raise ValueError(f"current_level ({current_level}) cannot be greater than target_level ({target_level})")
+
     fetcher = ResourceFetcher()
     plan = {
         "instrument": instrument,
