@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import './EmotionWheel.css';
 
+export interface SelectedEmotion {
+  base: string;
+  intensity: string;
+  sub: string;
+}
+
 interface EmotionData {
   emotions: {
     [key: string]: {
@@ -21,6 +27,19 @@ interface EmotionWheelProps {
   emotions: EmotionData | null;
   onEmotionSelected: (emotion: SelectedEmotion | null) => void;
 }
+
+const getEmotionColor = (base: string): { bg: string; border: string; hover: string } => {
+  const colors: { [key: string]: { bg: string; border: string; hover: string } } = {
+    angry: { bg: 'rgba(220, 38, 38, 0.2)', border: '#dc2626', hover: 'rgba(220, 38, 38, 0.3)' },
+    happy: { bg: 'rgba(234, 179, 8, 0.2)', border: '#eab308', hover: 'rgba(234, 179, 8, 0.3)' },
+    sad: { bg: 'rgba(59, 130, 246, 0.2)', border: '#3b82f6', hover: 'rgba(59, 130, 246, 0.3)' },
+    fear: { bg: 'rgba(168, 85, 247, 0.2)', border: '#a855f7', hover: 'rgba(168, 85, 247, 0.3)' },
+    disgust: { bg: 'rgba(34, 197, 94, 0.2)', border: '#22c55e', hover: 'rgba(34, 197, 94, 0.3)' },
+    surprise: { bg: 'rgba(236, 72, 153, 0.2)', border: '#ec4899', hover: 'rgba(236, 72, 153, 0.3)' },
+    neutral: { bg: 'rgba(107, 114, 128, 0.2)', border: '#6b7280', hover: 'rgba(107, 114, 128, 0.3)' }
+  };
+  return colors[base] || colors.neutral;
+};
 
 export const EmotionWheel: React.FC<EmotionWheelProps> = ({ emotions, onEmotionSelected }) => {
   const [selectedBase, setSelectedBase] = useState<string | null>(null);
@@ -93,6 +112,10 @@ export const EmotionWheel: React.FC<EmotionWheelProps> = ({ emotions, onEmotionS
     if (!str) return str;
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
+
+  const selectedEmotion = selectedBase && selectedIntensity && selectedSub
+    ? { base: selectedBase, intensity: selectedIntensity, sub: selectedSub }
+    : null;
 
   return (
     <div className="emotion-wheel-container">
