@@ -82,7 +82,7 @@ function App() {
     try {
       // Build emotional intent from selected emotion or use default
       const emotionalIntent = selectedEmotion 
-        ? `${selectedEmotion.base} (${selectedEmotion.intensity}: ${selectedEmotion.sub})`
+        ? `${selectedEmotion.base} (${selectedEmotion.intensity}): ${selectedEmotion.sub}`
         : "grief hidden as love";
       
       const result = await generateMusic({
@@ -117,11 +117,12 @@ function App() {
     setLoading(true);
     setError(null);
     try {
-      // Build message with selected emotion context if available
-      let message = "I want to write a song about loss";
-      if (selectedEmotion) {
-        message = `I want to write a song about ${selectedEmotion.base} (${selectedEmotion.intensity}: ${selectedEmotion.sub})`;
-      }
+      // Include selected emotion in interrogation message if available
+      const baseMessage = "I want to write a song about loss";
+      const emotionContext = selectedEmotion 
+        ? ` I'm feeling ${selectedEmotion.base} (${selectedEmotion.intensity}): ${selectedEmotion.sub}.`
+        : "";
+      const message = baseMessage + emotionContext;
       
       const result = await interrogate({
         message: message
@@ -209,12 +210,22 @@ function App() {
           <div className="ghostwriter-section">
             <h3>GhostWriter</h3>
             {selectedEmotion && (
-              <div style={{ marginBottom: '10px', padding: '8px', backgroundColor: 'rgba(99, 102, 241, 0.1)', borderRadius: '4px', fontSize: '0.9em' }}>
+              <div style={{ 
+                marginBottom: '10px', 
+                padding: '10px', 
+                backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                borderRadius: '4px',
+                fontSize: '0.9em'
+              }}>
                 Selected: {selectedEmotion.base} → {selectedEmotion.intensity} → {selectedEmotion.sub}
               </div>
             )}
-            <button onClick={handleGenerateMusic} disabled={loading || !selectedEmotion}>
-              {loading ? "Generating..." : selectedEmotion ? "Generate Music" : "Select an emotion first"}
+            <button 
+              onClick={handleGenerateMusic} 
+              disabled={loading || !selectedEmotion}
+              title={!selectedEmotion ? "Please select an emotion first" : ""}
+            >
+              {loading ? "Generating..." : selectedEmotion ? `Generate Music (${selectedEmotion.sub})` : "Select Emotion First"}
             </button>
           </div>
 
