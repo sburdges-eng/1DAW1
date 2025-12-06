@@ -9,11 +9,13 @@ Usage:
     python -m mcp_todo.cli list
     python -m mcp_todo.cli add "My task" --priority high
     python -m mcp_todo.cli complete abc123
+    python -m mcp_todo.cli create-issue "Add feature X" --repo owner/repo
 """
 
 import argparse
 import json
 import sys
+import os
 from typing import Optional
 
 from .storage import TodoStorage
@@ -179,6 +181,123 @@ def cmd_clear_completed(args, storage: TodoStorage):
     print(f"Cleared {count} completed TODOs")
 
 
+def cmd_create_issue(args, storage: Optional[TodoStorage] = None):
+    """Create a GitHub issue from a prompt."""
+    try:
+        from .github_issues import create_issue_from_prompt, GitHubIssueCreator
+    except ImportError:
+        print("Error: GitHub integration requires 'requests' library.")
+        print("Install with: pip install requests")
+        sys.exit(1)
+
+    # Parse repo (owner/repo format)
+    repo_parts = args.repo.split("/")
+    if len(repo_parts) != 2:
+        print("Error: Repository must be in format 'owner/repo'")
+        sys.exit(1)
+
+    owner, repo = repo_parts
+
+    # Get token
+    token = args.token or os.environ.get("GITHUB_TOKEN")
+    if not token:
+        print("Error: GitHub token required.")
+        print("Set GITHUB_TOKEN environment variable or use --token")
+        sys.exit(1)
+
+    # Custom labels
+    labels = args.labels.split(",") if args.labels else None
+
+    try:
+        # Create the issue
+        issue = create_issue_from_prompt(
+            prompt=args.prompt,
+            owner=owner,
+            repo=repo,
+            token=token,
+            start=args.start,
+            find_related=not args.no_related,
+            custom_labels=labels,
+        )
+
+        print(f"✓ Created issue #{issue['number']}: {issue['title']}")
+        print(f"  URL: {issue['html_url']}")
+        if issue.get("labels"):
+            labels_str = ", ".join([l['name'] for l in issue['labels']])
+            print(f"  Labels: {labels_str}")
+
+    except Exception as e:
+        print(f"Error creating issue: {e}")
+        sys.exit(1)
+
+
+def cmd_create_issues_batch(args, storage: Optional[TodoStorage] = None):
+    """Create multiple GitHub issues from a file or stdin."""
+    try:
+        from .github_issues import IssueParser, GitHubIssueCreator
+    except ImportError:
+        print("Error: GitHub integration requires 'requests' library.")
+        print("Install with: pip install requests")
+        sys.exit(1)
+
+    # Parse repo
+    repo_parts = args.repo.split("/")
+    if len(repo_parts) != 2:
+        print("Error: Repository must be in format 'owner/repo'")
+        sys.exit(1)
+
+    owner, repo = repo_parts
+
+    # Get token
+    token = args.token or os.environ.get("GITHUB_TOKEN")
+    if not token:
+        print("Error: GitHub token required.")
+        sys.exit(1)
+
+    # Read input
+    if args.file:
+        with open(args.file, "r") as f:
+            text = f.read()
+    else:
+        print("Reading from stdin (Ctrl+D when done)...")
+        text = sys.stdin.read()
+
+    # Parse into multiple issues
+    templates = IssueParser.parse_multiple(text)
+
+    if not templates:
+        print("No issues found in input.")
+        sys.exit(1)
+
+    print(f"Found {len(templates)} issues to create:")
+    for i, t in enumerate(templates, 1):
+        print(f"  {i}. {t.title}")
+
+    # Confirm
+    if not args.yes:
+        response = input("\nCreate these issues? [y/N]: ")
+        if response.lower() != "y":
+            print("Cancelled.")
+            sys.exit(0)
+
+    # Create issues
+    creator = GitHubIssueCreator(owner, repo, token=token)
+    created = []
+
+    for template in templates:
+        if args.start:
+            template.labels = ["in-progress"]
+
+        try:
+            issue = creator.create_issue(template)
+            created.append(issue)
+            print(f"✓ Created #{issue['number']}: {issue['title']}")
+        except Exception as e:
+            print(f"✗ Failed to create '{template.title}': {e}")
+
+    print(f"\nCreated {len(created)}/{len(templates)} issues.")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="MCP TODO CLI - Manage your tasks",
@@ -271,6 +390,23 @@ Examples:
     clear_parser = subparsers.add_parser("clear-completed", help="Clear completed TODOs")
     clear_parser.add_argument("--project", help="Project name")
 
+    # GitHub issue creation commands
+    issue_parser = subparsers.add_parser("create-issue", help="Create a GitHub issue")
+    issue_parser.add_argument("prompt", help="Issue description (natural language)")
+    issue_parser.add_argument("--repo", required=True, help="Repository (owner/repo)")
+    issue_parser.add_argument("--token", help="GitHub token (or use GITHUB_TOKEN env var)")
+    issue_parser.add_argument("--start", action="store_true", help="Mark as in-progress")
+    issue_parser.add_argument("--labels", help="Additional labels (comma-separated)")
+    issue_parser.add_argument("--no-related", action="store_true", help="Don't search for related issues")
+
+    # Batch issue creation
+    batch_parser = subparsers.add_parser("create-issues", help="Create multiple issues")
+    batch_parser.add_argument("--repo", required=True, help="Repository (owner/repo)")
+    batch_parser.add_argument("--token", help="GitHub token (or use GITHUB_TOKEN env var)")
+    batch_parser.add_argument("--file", help="Read from file (default: stdin)")
+    batch_parser.add_argument("--start", action="store_true", help="Mark all as in-progress")
+    batch_parser.add_argument("-y", "--yes", action="store_true", help="Skip confirmation")
+
     args = parser.parse_args()
 
     if not args.command:
@@ -293,11 +429,17 @@ Examples:
         "summary": cmd_summary,
         "export": cmd_export,
         "clear-completed": cmd_clear_completed,
+        "create-issue": cmd_create_issue,
+        "create-issues": cmd_create_issues_batch,
     }
 
     cmd_func = commands.get(args.command)
     if cmd_func:
-        cmd_func(args, storage)
+        # GitHub issue commands don't need storage
+        if args.command in ["create-issue", "create-issues"]:
+            cmd_func(args)
+        else:
+            cmd_func(args, storage)
     else:
         parser.print_help()
         sys.exit(1)
