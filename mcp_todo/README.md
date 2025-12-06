@@ -20,6 +20,7 @@ A Model Context Protocol (MCP) server for managing TODOs across multiple AI assi
 - **File-based Storage**: JSON storage at `~/.mcp_todo/todos.json`
 - **CLI Tool**: Manage tasks from the command line
 - **HTTP API**: REST API for HTTP-based integrations
+- **GitHub Integration**: Create GitHub issues from natural language prompts (see [GITHUB_ISSUES.md](GITHUB_ISSUES.md))
 
 ## Quick Start
 
@@ -45,6 +46,9 @@ python -m mcp_todo.cli list
 
 # Complete a task
 python -m mcp_todo.cli complete abc123
+
+# Create GitHub issue from natural language
+python -m mcp_todo.cli create-issue "Add user authentication" --repo owner/repo
 ```
 
 ### 3. Configure Your AI Assistant
