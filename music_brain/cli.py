@@ -881,6 +881,17 @@ def cmd_learn(args):
         target = args.target or 5
         hours = args.hours or 5.0
 
+        # Validate level ranges (1-10)
+        if current < 1 or current > 10:
+            print(f"Error: Current level must be between 1 and 10, got {current}")
+            return 1
+        if target < 1 or target > 10:
+            print(f"Error: Target level must be between 1 and 10, got {target}")
+            return 1
+        if current > target:
+            print(f"Error: Current level ({current}) cannot be greater than target level ({target})")
+            return 1
+
         inst = get_instrument(instrument)
         if inst:
             print(f"\n=== Learning Plan for {inst.name} ===\n")
