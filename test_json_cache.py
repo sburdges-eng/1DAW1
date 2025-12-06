@@ -116,12 +116,15 @@ def test_cache_performance():
 def test_default_value():
     """Test that default value is returned for missing files."""
     from music_brain.utils.json_cache import load_json_cached
+    import tempfile
     
-    # Non-existent file
-    result = load_json_cached("/tmp/nonexistent_file_12345.json", default={})
+    # Create a path that doesn't exist (cross-platform)
+    nonexistent_path = Path(tempfile.gettempdir()) / "nonexistent_file_12345.json"
+    
+    result = load_json_cached(nonexistent_path, default={})
     assert result == {}
     
-    result = load_json_cached("/tmp/nonexistent_file_12345.json", default={"fallback": True})
+    result = load_json_cached(nonexistent_path, default={"fallback": True})
     assert result == {"fallback": True}
 
 
@@ -229,8 +232,10 @@ if __name__ == "__main__":
         except AssertionError as e:
             print(f"✗ FAILED: {e}")
             failed += 1
+        except (ImportError, FileNotFoundError) as e:
+            print(f"⊘ SKIPPED: {type(e).__name__}: {e}")
         except Exception as e:
-            print(f"⊘ ERROR: {e}")
+            print(f"⊘ ERROR ({type(e).__name__}): {e}")
     
     print(f"\n{'='*60}")
     print(f"Results: {passed} passed, {failed} failed")

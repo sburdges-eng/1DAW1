@@ -51,8 +51,7 @@ def _load_json_with_mtime(filepath: str, mtime: float) -> Dict[str, Any]:
 
 def load_json_cached(
     filepath: str | Path,
-    default: Optional[Dict[str, Any]] = None,
-    maxsize: Optional[int] = None
+    default: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     """
     Load JSON file with automatic caching and invalidation.
@@ -60,10 +59,11 @@ def load_json_cached(
     Files are cached in memory after first load. The cache is automatically
     invalidated if the file is modified (based on modification time).
     
+    This function uses a global LRU cache with maxsize=256 entries.
+    
     Args:
         filepath: Path to JSON file (str or Path object)
         default: Default value to return if file doesn't exist (default: None)
-        maxsize: Maximum cache size (default: use global cache of 256)
         
     Returns:
         Parsed JSON data as dictionary, or default if file not found
@@ -90,10 +90,6 @@ def load_json_cached(
     
     # Get file modification time for cache invalidation
     mtime = os.path.getmtime(filepath)
-    
-    # Use the global cache or a custom cache
-    # Note: maxsize parameter is informational only; we use the global cache
-    # To use custom cache size, modify the @lru_cache decorator above
     
     try:
         return _load_json_with_mtime(str(filepath), mtime)
@@ -146,7 +142,7 @@ def get_cache_info() -> Dict[str, Any]:
 # Specialized loaders for common file types
 
 @lru_cache(maxsize=64)
-def load_emotion_file(emotion_name: str, emotion_dir: Optional[Path] = None) -> Dict[str, Any]:
+def load_emotion_file(emotion_name: str, emotion_dir: Optional[str | Path] = None) -> Dict[str, Any]:
     """
     Load emotion JSON file with caching.
     
@@ -163,7 +159,11 @@ def load_emotion_file(emotion_name: str, emotion_dir: Optional[Path] = None) -> 
     """
     if emotion_dir is None:
         # Default to emotion_thesaurus in repository root
-        emotion_dir = Path(__file__).parent.parent.parent / "emotion_thesaurus"
+        # Use safer path construction
+        base_dir = Path(__file__).parent.parent.parent
+        emotion_dir = base_dir / "emotion_thesaurus"
+    else:
+        emotion_dir = Path(emotion_dir)
     
     filepath = emotion_dir / f"{emotion_name}.json"
     return load_json_cached(filepath, default={})
