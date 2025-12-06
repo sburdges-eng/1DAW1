@@ -80,16 +80,17 @@ export const EmotionWheel: React.FC<EmotionWheelProps> = ({ emotions, onEmotionS
   };
 
   const getIntensities = () => {
-    if (!selectedBase) return [];
-    return Object.keys(emotions.emotions[selectedBase].intensities);
+    if (!selectedBase || !emotions?.emotions[selectedBase]) return [];
+    return Object.keys(emotions.emotions[selectedBase].intensities || {});
   };
 
   const getSubEmotions = () => {
-    if (!selectedBase || !selectedIntensity) return [];
-    return emotions.emotions[selectedBase].intensities[selectedIntensity] || [];
+    if (!selectedBase || !selectedIntensity || !emotions?.emotions[selectedBase]) return [];
+    return emotions.emotions[selectedBase].intensities?.[selectedIntensity] || [];
   };
 
   const capitalize = (str: string): string => {
+    if (!str) return str;
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
 
