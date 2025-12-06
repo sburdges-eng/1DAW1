@@ -267,9 +267,8 @@ def detect_sections(
     sections = []
     section_counts = {}  # Track section type counts for naming
     
-    for i in range(len(merged_boundaries) - 1):
-        start_bar = merged_boundaries[i]
-        end_bar = merged_boundaries[i + 1]
+    for i, (start_bar, end_bar) in enumerate(zip(merged_boundaries[:-1], merged_boundaries[1:])):
+        # Use enumerate + zip for cleaner iteration over consecutive pairs
         
         start_tick = start_bar * ticks_per_bar
         end_tick = end_bar * ticks_per_bar
