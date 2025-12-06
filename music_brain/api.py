@@ -57,6 +57,9 @@ async def generate_music(request: GenerateRequest):
     """Generate music from emotional intent"""
     try:
         from music_brain.session.generator import SongGenerator
+        import tempfile
+        import os
+        from pathlib import Path
         
         # Extract parameters from intent
         intent = request.intent
@@ -89,11 +92,35 @@ async def generate_music(request: GenerateRequest):
             tempo=float(tempo) if tempo else None
         )
         
+        # Generate MIDI file
+        midi_path = None
+        try:
+            # Create temporary directory for MIDI files
+            temp_dir = Path(tempfile.gettempdir()) / "music_brain_midi"
+            temp_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Generate unique filename
+            import time
+            timestamp = int(time.time() * 1000)
+            safe_title = "".join(c for c in song.title if c.isalnum() or c in (' ', '-', '_')).strip()[:30]
+            midi_filename = f"{safe_title}_{timestamp}.mid"
+            midi_path = str(temp_dir / midi_filename)
+            
+            # Export to MIDI
+            song.export_to_midi(midi_path)
+            
+        except Exception as midi_error:
+            # Log error but don't fail the request
+            import logging
+            logging.warning(f"MIDI generation failed: {midi_error}")
+            midi_path = None
+        
         # Convert to dict for JSON response using the song's to_dict method
         result = {
             "success": True,
             "intent": intent.dict(),
             "song": song.to_dict(),
+            "midi_path": midi_path,
             "message": f"Generated {len(song.sections)} sections, {song.total_bars} bars at {song.tempo_bpm} BPM"
         }
         
