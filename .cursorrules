@@ -1,0 +1,188 @@
+# iDAW Cursor Rules
+# Automated workflow rules for the iDAW monorepo
+
+## Project Philosophy
+
+**"Interrogate Before Generate"** - The tool shouldn't finish art for people. It should make them braver.
+
+You are working on iDAW (Intelligent Digital Audio Workstation), a multi-component music production platform that combines:
+- Real-time C++ audio processing (JUCE-based)
+- Python-based music intelligence and AI-assisted composition
+- Multi-AI collaboration orchestration
+- Intent-driven creative workflows
+
+---
+
+## Repository Structure
+
+This is a **monorepo** with multiple subsystems:
+
+```
+iDAW/
+├── [Root Level Python]        # Core Python modules (analyzers, engines, tools)
+├── mcp_workstation/           # MCP Multi-AI Workstation (orchestration)
+├── mcp_todo/                  # MCP TODO Server (cross-AI task management)
+├── penta_core_music-brain/    # MCP Swarm Server (multi-AI aggregation)
+├── DAiW-Music-Brain/          # Python Music Intelligence Toolkit
+├── iDAW_Core/                 # JUCE Plugin Suite (C++)
+├── src_penta-core/            # Penta-Core C++ Engines (implementation)
+├── include/penta/             # Penta-Core C++ Headers
+├── python/penta_core/         # Python bindings for Penta-Core
+├── tests/                     # C++ unit tests
+├── tests_music-brain/         # Python integration tests
+├── tests_penta-core/          # Penta-Core C++ tests
+├── Data_Files/                # JSON data (progressions, genres, fingerprints)
+└── vault/                     # Obsidian Knowledge Base
+```
+
+---
+
+## Code Style & Conventions
+
+### Python
+- **Line length**: 100 characters
+- **Formatter**: black
+- **Type hints**: Required for public APIs
+- **Python version**: Target 3.9+
+- **Imports**: Use lazy imports in CLI for fast startup
+
+### C++
+- **Standard**: C++17
+- **Naming**: PascalCase for classes, camelCase for methods, snake_case for variables
+- **RT-Safety**: Mark audio callbacks `noexcept`, no allocations in audio thread
+- **Memory**: Use `std::pmr` containers where possible
+- **SIMD**: Use AVX2 optimizations with scalar fallback
+
+---
+
+## Key Architecture Rules
+
+### 1. Dual-Engine Design
+- **Side A (C++)**: Real-time audio, deterministic, lock-free
+- **Side B (Python)**: AI generation, dynamic, may block
+- **Communication**: Lock-free ring buffers (Side B → Side A)
+
+### 2. RT-Safety Rules (CRITICAL)
+1. All `processAudio()` methods must be marked `noexcept`
+2. NO memory allocation in audio callbacks
+3. Use lock-free data structures for thread communication
+4. `kDefaultSampleRate = 44100.0`
+5. Audio thread NEVER waits on UI/AI
+
+### 3. Intent-Driven Composition
+- Emotional intent drives technical choices
+- Phase 0 (why) must precede Phase 2 (how)
+- Rule-breaking requires explicit justification
+
+---
+
+## Development Commands
+
+### Python
+```bash
+# Install
+pip install -e ".[dev]"
+
+# Format
+black music_brain/ tests/
+
+# Type check
+mypy music_brain/
+
+# Lint
+flake8 music_brain/ tests/
+
+# Test
+pytest tests_music-brain/ -v
+pytest DAiW-Music-Brain/tests/ -v
+```
+
+### C++
+```bash
+mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release -G Ninja
+ninja penta_core
+ninja penta_tests
+ctest --output-on-failure
+```
+
+### CLI Tools
+```bash
+# Music Brain CLI
+daiw extract drums.mid
+daiw analyze --chords song.mid
+daiw intent new --title "My Song"
+
+# MCP Workstation CLI
+python -m mcp_workstation status
+python -m mcp_workstation phases
+python -m mcp_workstation cpp
+
+# MCP TODO CLI
+python -m mcp_todo.cli add "Task" --priority high
+python -m mcp_todo.cli list --status pending
+```
+
+---
+
+## Common Tasks
+
+### Adding a New Groove Genre
+1. Add entry to `Data_Files/genre_pocket_maps.json`
+2. Add template in `music_brain/groove/templates.py`
+3. Add to CLI choices in `music_brain/cli.py`
+
+### Adding a Rule-Breaking Option
+1. Add enum value in `music_brain/session/intent_schema.py`
+2. Add entry in `RULE_BREAKING_EFFECTS` dict
+3. Implement in `intent_processor.py`
+
+### Adding a Penta-Core Engine
+1. Create header in `include/penta/<subsystem>/`
+2. Implement in `src_penta-core/<subsystem>/`
+3. Update `src_penta-core/CMakeLists.txt`
+4. Add Python bindings in `python/penta_core/`
+5. Add tests in `tests_penta-core/`
+
+### Adding a Music Theory Rule
+1. Create rule class in `python/penta_core/rules/`
+2. Add to appropriate rules module (harmony, rhythm, etc.)
+3. Add teacher support in `python/penta_core/teachers/`
+4. Add tests
+
+---
+
+## File Patterns
+
+### When editing Python files:
+- Always include type hints for function parameters and return values
+- Use data classes with `to_dict()`/`from_dict()` serialization
+- Follow existing import patterns (lazy imports for CLI)
+
+### When editing C++ files:
+- Check for RT-safety implications
+- Verify no allocations in audio thread paths
+- Use `assertNotAudioThread()` before blocking operations
+
+### When editing JSON data files:
+- Validate JSON syntax before saving
+- Keep consistent formatting with existing entries
+- Update any related Python code that uses the data
+
+---
+
+## Testing Requirements
+
+Before committing, ensure:
+1. `pytest tests_music-brain/ -v` passes
+2. `flake8` shows no errors
+3. `mypy` shows no type errors
+4. For C++ changes: `ctest --output-on-failure` passes
+
+---
+
+## Meta Principle
+
+> "The audience doesn't hear 'borrowed from Dorian.' They hear 'that part made me cry.'"
+
+Technical implementation serves emotional expression. The tool educates and empowers - it doesn't just generate.
