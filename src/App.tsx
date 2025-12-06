@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useMusicBrain } from "./hooks/useMusicBrain";
+import { EmotionWheel, SelectedEmotion } from "./components/EmotionWheel";
 import "./App.css";
 
 function App() {
@@ -10,6 +11,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [apiStatus, setApiStatus] = useState<'checking' | 'online' | 'offline'>('checking');
+  const [selectedEmotion, setSelectedEmotion] = useState<SelectedEmotion | null>(null);
   
   // Always call hooks unconditionally
   const musicBrain = useMusicBrain();
@@ -78,9 +80,14 @@ function App() {
     setLoading(true);
     setError(null);
     try {
+      // Build emotional intent from selected emotion or use default
+      const emotionalIntent = selectedEmotion 
+        ? `${selectedEmotion.base} (${selectedEmotion.intensity}): ${selectedEmotion.sub}`
+        : "grief hidden as love";
+      
       const result = await generateMusic({
         intent: {
-          emotional_intent: "grief hidden as love",
+          emotional_intent: emotionalIntent,
           technical: {
             key: "F major",
             bpm: 82,
@@ -110,8 +117,15 @@ function App() {
     setLoading(true);
     setError(null);
     try {
+      // Include selected emotion in interrogation message if available
+      const baseMessage = "I want to write a song about loss";
+      const emotionContext = selectedEmotion 
+        ? ` I'm feeling ${selectedEmotion.base} (${selectedEmotion.intensity}): ${selectedEmotion.sub}.`
+        : "";
+      const message = baseMessage + emotionContext;
+      
       const result = await interrogate({
-        message: "I want to write a song about loss"
+        message: message
       });
       setApiStatus('online');
       console.log('Interrogation response:', result);
@@ -187,17 +201,31 @@ function App() {
               {loading ? "Loading..." : "Load Emotions"}
             </button>
             {emotions && (
-              <div className="emotion-preview">
-                <p>Total emotion nodes: {emotions.total_nodes}</p>
-                <p>Base emotions: {Object.keys(emotions.emotions).length}</p>
+              <div style={{ marginTop: '20px' }}>
+                <EmotionWheel emotions={emotions} onEmotionSelected={setSelectedEmotion} />
               </div>
             )}
           </div>
 
           <div className="ghostwriter-section">
             <h3>GhostWriter</h3>
-            <button onClick={handleGenerateMusic} disabled={loading}>
-              {loading ? "Generating..." : "Generate Music"}
+            {selectedEmotion && (
+              <div style={{ 
+                marginBottom: '10px', 
+                padding: '10px', 
+                backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                borderRadius: '4px',
+                fontSize: '0.9em'
+              }}>
+                Selected: {selectedEmotion.base} → {selectedEmotion.intensity} → {selectedEmotion.sub}
+              </div>
+            )}
+            <button 
+              onClick={handleGenerateMusic} 
+              disabled={loading || !selectedEmotion}
+              title={!selectedEmotion ? "Please select an emotion first" : ""}
+            >
+              {loading ? "Generating..." : selectedEmotion ? `Generate Music (${selectedEmotion.sub})` : "Select Emotion First"}
             </button>
           </div>
 
