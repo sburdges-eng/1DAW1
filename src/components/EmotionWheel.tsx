@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './EmotionWheel.css';
 
 interface EmotionData {
   emotions: {
@@ -10,7 +11,7 @@ interface EmotionData {
   };
 }
 
-interface SelectedEmotion {
+export interface SelectedEmotion {
   base: string;
   intensity: string;
   sub: string;
@@ -21,6 +22,19 @@ interface EmotionWheelProps {
   onEmotionSelected: (emotion: SelectedEmotion | null) => void;
 }
 
+const getEmotionColor = (base: string): string => {
+  const colorMap: { [key: string]: string } = {
+    angry: 'emotion-angry',
+    happy: 'emotion-happy',
+    sad: 'emotion-sad',
+    fear: 'emotion-fear',
+    disgust: 'emotion-disgust',
+    surprise: 'emotion-surprise',
+    neutral: 'emotion-neutral'
+  };
+  return colorMap[base.toLowerCase()] || 'emotion-neutral';
+};
+
 export const EmotionWheel: React.FC<EmotionWheelProps> = ({ emotions, onEmotionSelected }) => {
   const [selectedBase, setSelectedBase] = useState<string | null>(null);
   const [selectedIntensity, setSelectedIntensity] = useState<string | null>(null);
@@ -28,7 +42,7 @@ export const EmotionWheel: React.FC<EmotionWheelProps> = ({ emotions, onEmotionS
 
   if (!emotions) {
     return (
-      <div className="text-gray-500 text-center py-8">
+      <div className="emotion-wheel-empty">
         Load emotions to begin selection
       </div>
     );
@@ -67,16 +81,6 @@ export const EmotionWheel: React.FC<EmotionWheelProps> = ({ emotions, onEmotionS
     onEmotionSelected(null);
   };
 
-  const emotionColors: { [key: string]: string } = {
-    angry: 'bg-red-900/30 hover:bg-red-800/40 border-red-700',
-    happy: 'bg-yellow-900/30 hover:bg-yellow-800/40 border-yellow-700',
-    sad: 'bg-blue-900/30 hover:bg-blue-800/40 border-blue-700',
-    fear: 'bg-purple-900/30 hover:bg-purple-800/40 border-purple-700',
-    disgust: 'bg-green-900/30 hover:bg-green-800/40 border-green-700',
-    surprise: 'bg-pink-900/30 hover:bg-pink-800/40 border-pink-700',
-    neutral: 'bg-gray-900/30 hover:bg-gray-800/40 border-gray-700'
-  };
-
   const getIntensities = () => {
     if (!selectedBase) return [];
     return Object.keys(emotions.emotions[selectedBase].intensities);
@@ -88,38 +92,34 @@ export const EmotionWheel: React.FC<EmotionWheelProps> = ({ emotions, onEmotionS
   };
 
   return (
-    <div className="space-y-4">
+    <div className="emotion-wheel-container">
       {selectedBase && selectedIntensity && selectedSub && (
-        <div className="bg-indigo-900/20 border border-indigo-700 rounded-lg p-4 flex justify-between items-center">
-          <div>
-            <div className="text-sm text-gray-400">Selected Emotion:</div>
-            <div className="text-lg font-medium">
+        <div className="emotion-wheel-selected animate-fadeIn">
+          <div className="emotion-wheel-selected-content">
+            <div className="emotion-wheel-selected-label">Selected Emotion:</div>
+            <div className="emotion-wheel-selected-value">
               {selectedBase} → {selectedIntensity} → {selectedSub}
             </div>
           </div>
           <button
             onClick={resetSelection}
-            className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded text-sm"
+            className="emotion-wheel-clear-btn"
           >
             Clear
           </button>
         </div>
       )}
 
-      <div>
-        <h3 className="text-sm font-medium mb-2 text-gray-400">
+      <div className="emotion-wheel-step">
+        <h4 className="emotion-wheel-step-title">
           {selectedBase ? '1. Base Emotion (selected)' : '1. Select Base Emotion'}
-        </h3>
-        <div className="grid grid-cols-4 gap-2">
+        </h4>
+        <div className="emotion-wheel-grid emotion-wheel-grid-base">
           {baseEmotions.map(base => (
             <button
               key={base}
               onClick={() => handleBaseClick(base)}
-              className={`
-                p-3 rounded-lg border-2 transition-all capitalize
-                ${selectedBase === base ? 'ring-2 ring-indigo-500' : ''}
-                ${emotionColors[base] || 'bg-gray-800 hover:bg-gray-700 border-gray-600'}
-              `}
+              className={`emotion-wheel-btn ${getEmotionColor(base)} ${selectedBase === base ? 'emotion-wheel-btn-selected' : ''}`}
             >
               {base}
             </button>
@@ -128,20 +128,16 @@ export const EmotionWheel: React.FC<EmotionWheelProps> = ({ emotions, onEmotionS
       </div>
 
       {selectedBase && (
-        <div className="animate-fadeIn">
-          <h3 className="text-sm font-medium mb-2 text-gray-400">
+        <div className="emotion-wheel-step animate-fadeIn">
+          <h4 className="emotion-wheel-step-title">
             {selectedIntensity ? '2. Intensity Level (selected)' : '2. Select Intensity Level'}
-          </h3>
-          <div className="grid grid-cols-3 gap-2">
+          </h4>
+          <div className="emotion-wheel-grid emotion-wheel-grid-intensity">
             {getIntensities().map(intensity => (
               <button
                 key={intensity}
                 onClick={() => handleIntensityClick(intensity)}
-                className={`
-                  p-3 rounded-lg border-2 transition-all capitalize
-                  ${selectedIntensity === intensity ? 'ring-2 ring-indigo-500' : ''}
-                  ${emotionColors[selectedBase]}
-                `}
+                className={`emotion-wheel-btn ${getEmotionColor(selectedBase)} ${selectedIntensity === intensity ? 'emotion-wheel-btn-selected' : ''}`}
               >
                 {intensity}
               </button>
@@ -151,20 +147,16 @@ export const EmotionWheel: React.FC<EmotionWheelProps> = ({ emotions, onEmotionS
       )}
 
       {selectedBase && selectedIntensity && (
-        <div className="animate-fadeIn">
-          <h3 className="text-sm font-medium mb-2 text-gray-400">
+        <div className="emotion-wheel-step animate-fadeIn">
+          <h4 className="emotion-wheel-step-title">
             {selectedSub ? '3. Specific Emotion (selected)' : '3. Select Specific Emotion'}
-          </h3>
-          <div className="grid grid-cols-3 gap-2">
+          </h4>
+          <div className="emotion-wheel-grid emotion-wheel-grid-sub">
             {getSubEmotions().map(sub => (
               <button
                 key={sub}
                 onClick={() => handleSubClick(sub)}
-                className={`
-                  p-3 rounded-lg border-2 transition-all capitalize
-                  ${selectedSub === sub ? 'ring-2 ring-indigo-500' : ''}
-                  ${emotionColors[selectedBase]}
-                `}
+                className={`emotion-wheel-btn ${getEmotionColor(selectedBase)} ${selectedSub === sub ? 'emotion-wheel-btn-selected' : ''}`}
               >
                 {sub}
               </button>
@@ -174,7 +166,7 @@ export const EmotionWheel: React.FC<EmotionWheelProps> = ({ emotions, onEmotionS
       )}
 
       {!selectedBase && (
-        <div className="text-sm text-gray-500 italic text-center py-4">
+        <div className="emotion-wheel-empty">
           Choose your emotional starting point above
         </div>
       )}
