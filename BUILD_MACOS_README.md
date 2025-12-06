@@ -17,6 +17,7 @@ This will create `dist/iDAW.app` with:
 ## Prerequisites
 
 ### Required Tools
+
 - **macOS 10.15+** (Catalina or later)
 - **Xcode Command Line Tools**: `xcode-select --install`
 - **Python 3.9+**: `python3 --version`
@@ -25,28 +26,33 @@ This will create `dist/iDAW.app` with:
 - **CMake 3.22+**: `cmake --version`
 
 ### Optional Tools
+
 - **Ninja** (faster builds): `brew install ninja`
 - **create-dmg** (for DMG creation): `brew install create-dmg`
 
 ## Build Options
 
 ### Basic Build
+
 ```bash
 ./build_macos_standalone.sh
 ```
 
 ### Release Build (Optimized)
+
 ```bash
 ./build_macos_standalone.sh --release
 ```
 
 ### Code Signing
+
 ```bash
 export DEVELOPER_ID="Developer ID Application: Your Name"
 ./build_macos_standalone.sh --sign
 ```
 
 ### Notarization (Requires Signing)
+
 ```bash
 export DEVELOPER_ID="Developer ID Application: Your Name"
 export APPLE_ID="your@email.com"
@@ -88,11 +94,13 @@ dist/
 The app embeds Python in two ways:
 
 ### Development Mode
+
 - Uses system Python (`python3`)
 - Requires Python packages to be installed
 - Faster iteration
 
 ### Production Mode
+
 - Bundles Python packages in `Resources/python/`
 - Includes `start_api.py` launcher
 - Self-contained (no system Python required)
@@ -100,14 +108,17 @@ The app embeds Python in two ways:
 ## Running the App
 
 ### From Finder
+
 Double-click `dist/iDAW.app`
 
 ### From Terminal
+
 ```bash
 open dist/iDAW.app
 ```
 
 ### Debug Mode
+
 ```bash
 ./dist/iDAW.app/Contents/MacOS/idaw
 ```
@@ -115,24 +126,29 @@ open dist/iDAW.app
 ## Troubleshooting
 
 ### "Python interpreter not found"
+
 - Ensure Python 3.9+ is installed: `python3 --version`
 - For production builds, Python packages are bundled automatically
 
 ### "API script not found"
+
 - Check that `music_brain/api.py` exists
 - Verify Python packages are installed: `pip3 install -e .`
 
 ### "C++ build failed"
+
 - Ensure CMake is installed: `cmake --version`
 - Check that required C++ libraries are available
 - Some components (JUCE) may be optional
 
 ### "Tauri build failed"
+
 - Ensure Rust is installed: `rustup install stable`
 - Check Node dependencies: `npm install`
 - Verify frontend builds: `npm run build`
 
 ### App crashes on launch
+
 - Check console logs: `Console.app` → Search for "iDAW"
 - Verify Python server starts: Check `Resources/python/start_api.py`
 - Test API manually: `curl http://127.0.0.1:8000/health`
@@ -171,6 +187,7 @@ open dist/iDAW.app
 ## Distribution
 
 ### Create DMG
+
 ```bash
 create-dmg \
   --volname "iDAW" \
@@ -181,6 +198,7 @@ create-dmg \
 ```
 
 ### App Store Distribution
+
 1. Code sign with App Store certificate
 2. Notarize the app
 3. Create App Store package: `productbuild --component dist/iDAW.app /Applications iDAW.pkg`
@@ -188,12 +206,14 @@ create-dmg \
 ## Development vs Production
 
 ### Development
+
 - Uses system Python
 - Hot-reloads frontend changes
 - Debug symbols included
 - Faster build times
 
 ### Production
+
 - Bundles Python runtime
 - Optimized builds
 - Code signed (optional)

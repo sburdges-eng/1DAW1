@@ -5,6 +5,7 @@
 A comprehensive build system for creating a standalone macOS application bundle that includes:
 
 ### Components
+
 1. **React Frontend** - TypeScript/React UI with Tauri
 2. **Python Backend** - Music Brain API server (embedded)
 3. **C++ Audio Engines** - penta_core and iDAW_Core libraries
@@ -14,12 +15,14 @@ A comprehensive build system for creating a standalone macOS application bundle 
 ## Files Created/Modified
 
 ### New Files
+
 - `build_macos_standalone.sh` - Main build script
 - `BUILD_MACOS_README.md` - Comprehensive build documentation
 - `music_brain/start_api_embedded.py` - Embedded Python API launcher
 - `src-tauri/src/python_server.rs` - Python server management in Rust
 
 ### Modified Files
+
 - `src-tauri/src/main.rs` - Added Python server auto-start
 - `src-tauri/src/commands.rs` - Added server health checks
 - `src-tauri/Cargo.toml` - Added reqwest with blocking feature
@@ -57,16 +60,19 @@ iDAW.app Bundle
 ## Usage
 
 ### Basic Build
+
 ```bash
 ./build_macos_standalone.sh
 ```
 
 ### Release Build
+
 ```bash
 ./build_macos_standalone.sh --release
 ```
 
 ### With Code Signing
+
 ```bash
 export DEVELOPER_ID="Developer ID Application: Your Name"
 ./build_macos_standalone.sh --sign
@@ -75,17 +81,20 @@ export DEVELOPER_ID="Developer ID Application: Your Name"
 ## Key Features
 
 ### Python Server Management
+
 - **Auto-start**: Python server starts automatically when app launches
 - **Health checks**: Commands verify server is running before use
 - **Embedded mode**: Works with bundled Python packages
 - **Development mode**: Falls back to system Python if needed
 
 ### Build Flexibility
+
 - **Development**: Uses system Python, faster iteration
 - **Production**: Bundles Python, fully self-contained
 - **Optional components**: C++ builds are optional if dependencies missing
 
 ### Error Handling
+
 - Graceful fallbacks for missing components
 - Clear error messages
 - Health check system for Python server

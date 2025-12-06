@@ -8,6 +8,7 @@
 
 Output: `dist/iDAW.app`
 
+
 ## Prerequisites Check
 
 ```bash
