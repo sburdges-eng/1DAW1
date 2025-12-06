@@ -809,7 +809,7 @@ def generate_learning_plan(
     Raises:
         ValueError: If current_level or target_level are outside 1-10 range
     """
-    # Validate difficulty levels are within valid range (1-10)
+    # Validate level ranges (1-10 for DifficultyLevel enum)
     if current_level < 1 or current_level > 10:
         raise ValueError(f"current_level must be between 1 and 10, got {current_level}")
     if target_level < 1 or target_level > 10:

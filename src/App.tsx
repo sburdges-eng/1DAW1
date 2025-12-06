@@ -12,6 +12,7 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [apiStatus, setApiStatus] = useState<'checking' | 'online' | 'offline'>('checking');
   const [selectedEmotion, setSelectedEmotion] = useState<SelectedEmotion | null>(null);
+  const [generatedMidiPath, setGeneratedMidiPath] = useState<string | null>(null);
   
   // Always call hooks unconditionally
   const musicBrain = useMusicBrain();
@@ -98,7 +99,16 @@ function App() {
       });
       setApiStatus('online');
       console.log('Music generated:', result);
-      alert('Music generated! Check console for details.');
+      
+      // Extract MIDI path from result
+      const midiPath = (result as any)?.midi_path || null;
+      setGeneratedMidiPath(midiPath);
+      
+      if (midiPath) {
+        alert(`Music generated! MIDI file: ${midiPath}`);
+      } else {
+        alert('Music generated! Check console for details.');
+      }
     } catch (error) {
       console.error('Error generating music:', error);
       setApiStatus('offline');
@@ -220,6 +230,14 @@ function App() {
             >
               {loading ? "Generating..." : selectedEmotion ? `Generate Music (${selectedEmotion.sub})` : "Generate Music (Select Emotion First)"}
             </button>
+            {generatedMidiPath && (
+              <div style={{ marginTop: '10px', padding: '10px', backgroundColor: 'rgba(76, 175, 80, 0.1)', borderRadius: '4px', border: '1px solid #4caf50' }}>
+                <strong>✅ MIDI Generated:</strong>
+                <div style={{ marginTop: '5px', fontSize: '0.9em', fontFamily: 'monospace', wordBreak: 'break-all' }}>
+                  {generatedMidiPath}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="interrogator-section">
