@@ -1,6 +1,6 @@
 # iDAW - Comprehensive Timelined To-Do List
 
-**Last Updated:** December 3, 2025  
+**Last Updated:** December 3, 2025
 **Project Status:** Bridge Issues Fixed ✅ | Active Development 🚀
 
 ---
@@ -8,11 +8,13 @@
 ## 📊 Project Overview
 
 iDAW (Interrogate Before You DAW) is a merged repository combining:
+
 - **DAiW-Music-Brain**: Python-based emotional music composition toolkit
 - **penta-core**: Real-time C++ DSP engine with Python bindings
 - **MCP Servers**: Todo management and workstation tools
 
 ### Core Philosophy
+
 > "Interrogate Before Generate" - Emotional intent drives technical decisions, not the other way around.
 
 ---
@@ -20,6 +22,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 ## ✅ Recently Completed (December 2025)
 
 ### Bridge Integration Fixes ✅
+
 - [x] Fixed `HarmonyPlan` class to include `vulnerability` parameter
 - [x] Added default values to all `HarmonyPlan` fields for flexible initialization
 - [x] Fixed `TherapySession.set_scales()` parameter name (`chaos` instead of `chaos_tolerance`)
@@ -29,6 +32,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 - [x] All 11 bridge integration tests now passing
 
 ### Previous Completions
+
 - [x] Repository merge completed
 - [x] Core Python modules implemented (15+)
 - [x] CLI commands working (6 commands)
@@ -44,6 +48,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 ### High Priority - This Week
 
 #### Testing & Quality
+
 - [ ] Run full test suite across all modules
 - [ ] Fix any remaining test failures (target: 95%+ passing)
 - [ ] Add integration tests for orchestrator module
@@ -51,12 +56,14 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 - [ ] Document test coverage gaps
 
 #### Documentation
+
 - [ ] Update API documentation for bridge fixes
 - [ ] Create user guide for bridge API usage
 - [ ] Document vulnerability parameter in intent schema
 - [ ] Add examples of guide tones generation
 
 #### Core Features
+
 - [ ] Validate orchestrator pipeline integration
 - [ ] Test Ableton bridge OSC/MIDI communication
 - [ ] Verify genre detection in bridge API
@@ -65,18 +72,21 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 ### Medium Priority - Next 2 Weeks
 
 #### Code Quality
+
 - [ ] Run linters (black, flake8, mypy) on all Python code
 - [ ] Fix type hints in bridge_api.py
 - [ ] Refactor comprehensive_engine.py for better modularity
 - [ ] Add docstrings to all public functions
 
 #### Features
+
 - [ ] Implement groove humanization intensity controls
 - [ ] Add more emotional presets to emotional_mapping.py
 - [ ] Expand chord progression families database
 - [ ] Create more rule-breaking examples
 
 #### Integration
+
 - [ ] Test C++ penta-core bindings with Python bridge
 - [ ] Implement OSC message handlers for real-time control
 - [ ] Create Logic Pro X workflow templates
@@ -89,6 +99,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 ### January 2026
 
 #### Production-Ready Features
+
 - [ ] Complete audio feel analysis with librosa
 - [ ] Finish MIDI cataloging tool
 - [ ] Implement pitch detection and correction
@@ -96,6 +107,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 - [ ] Complete groove template library (10+ genres)
 
 #### Developer Experience
+
 - [ ] Create comprehensive examples for all major features
 - [ ] Build interactive tutorial system
 - [ ] Add Jupyter notebook examples
@@ -103,6 +115,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 - [ ] Improve error messages and debugging
 
 #### Documentation
+
 - [ ] Complete API reference documentation
 - [ ] Write architecture design documents
 - [ ] Create contributing guidelines
@@ -112,6 +125,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 ### February 2026
 
 #### Advanced Features
+
 - [ ] Implement real-time chord detection with penta-core
 - [ ] Add voice synthesis CC mapping controls
 - [ ] Create MIDI-to-intent reverse engineering
@@ -119,6 +133,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 - [ ] Implement smart arrangement tools
 
 #### UI/UX
+
 - [ ] Design CLI interactive mode improvements
 - [ ] Create progress bars for long operations
 - [ ] Add color-coded emotional feedback
@@ -126,6 +141,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 - [ ] Design visual chord diagrams
 
 #### Platform Support
+
 - [ ] Test on Windows (WSL and native)
 - [ ] Test on macOS (Intel and Apple Silicon)
 - [ ] Test on Linux (Ubuntu, Fedora, Arch)
@@ -135,6 +151,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 ### March 2026
 
 #### Performance
+
 - [ ] Profile and optimize hot paths
 - [ ] Implement caching for chord analysis
 - [ ] Optimize MIDI file I/O
@@ -142,6 +159,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 - [ ] Add async processing where beneficial
 
 #### Integration & Plugins
+
 - [ ] Build VST3 plugin prototype (C++)
 - [ ] Create AU plugin for macOS
 - [ ] Implement Ableton Link sync
@@ -149,6 +167,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 - [ ] Create preset management system
 
 #### Community
+
 - [ ] Set up issue templates
 - [ ] Create discussion forums
 - [ ] Start regular office hours
@@ -162,6 +181,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 ### April 2026
 
 #### Advanced Music Theory
+
 - [ ] Implement modal interchange analysis
 - [ ] Add negative harmony transformations
 - [ ] Create voice leading optimizer
@@ -169,6 +189,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 - [ ] Add Neo-Riemannian transformations
 
 #### AI Integration
+
 - [ ] Fine-tune LLM for music theory chat
 - [ ] Implement GPT-based lyric analysis
 - [ ] Create AI mood classifier
@@ -176,6 +197,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 - [ ] Add AI-assisted mixing tips
 
 #### Data & Analytics
+
 - [ ] Build song analysis dashboard
 - [ ] Track user emotion-to-chord patterns
 - [ ] Create progression popularity metrics
@@ -185,6 +207,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 ### May 2026
 
 #### Mobile & Web
+
 - [ ] Design web-based UI prototype
 - [ ] Create REST API for remote access
 - [ ] Build mobile companion app (iOS/Android)
@@ -192,6 +215,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 - [ ] Add collaboration features
 
 #### Educational Content
+
 - [ ] Create music theory course integration
 - [ ] Build interactive exercises
 - [ ] Add certification system
@@ -201,6 +225,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 ### June 2026
 
 #### Enterprise Features
+
 - [ ] Multi-user project management
 - [ ] Version control for musical ideas
 - [ ] Team collaboration tools
@@ -208,6 +233,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 - [ ] Custom branding options
 
 #### Ecosystem
+
 - [ ] Build plugin marketplace
 - [ ] Create preset sharing platform
 - [ ] Implement cloud backup
@@ -221,6 +247,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 ### Major System Expansions
 
 #### Intelligent Composition Assistant
+
 - [ ] Real-time co-composition with AI
 - [ ] Context-aware musical suggestions
 - [ ] Style transfer between genres
@@ -228,6 +255,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 - [ ] Predictive harmony assistant
 
 #### Therapeutic Music System
+
 - [ ] Clinical music therapy integration
 - [ ] Biometric feedback integration (heart rate, GSR)
 - [ ] Personalized emotional response modeling
@@ -235,6 +263,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 - [ ] Research partnership programs
 
 #### Production Suite
+
 - [ ] Full DAW integration (all major DAWs)
 - [ ] Mixing and mastering assistant
 - [ ] Sample library organization
@@ -242,6 +271,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 - [ ] Session archiving and recall
 
 #### Hardware Integration
+
 - [ ] MIDI controller mapping system
 - [ ] Modular synth integration
 - [ ] Eurorack interface
@@ -255,6 +285,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 ### Ongoing Tasks
 
 #### Code Health
+
 - [ ] Maintain test coverage > 90%
 - [ ] Keep dependencies up to date
 - [ ] Regular security audits
@@ -262,6 +293,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 - [ ] Code review backlog < 1 week
 
 #### Infrastructure
+
 - [ ] CI/CD pipeline optimization
 - [ ] Automated deployment
 - [ ] Monitoring and alerting
@@ -269,6 +301,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 - [ ] Log aggregation
 
 #### Documentation
+
 - [ ] Keep README files current
 - [ ] Update changelog for each release
 - [ ] Maintain migration guides
@@ -282,18 +315,21 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 ### Quantitative Goals
 
 **2025 Q4** (Current)
+
 - [x] All bridge tests passing (11/11) ✅
 - [ ] Overall test coverage > 80%
 - [ ] Zero critical bugs
 - [ ] Documentation coverage > 70%
 
 **2026 Q1**
+
 - [ ] 100+ GitHub stars
 - [ ] 10+ contributors
 - [ ] 50+ test cases
 - [ ] 5 production users
 
 **2026 Q2**
+
 - [ ] 500+ GitHub stars
 - [ ] 25+ contributors
 - [ ] 200+ test cases
@@ -301,6 +337,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 - [ ] 1st production release (v1.0)
 
 **2026 Q3-Q4**
+
 - [ ] 1000+ GitHub stars
 - [ ] 50+ contributors
 - [ ] 500+ test cases
@@ -348,6 +385,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 ### For New Contributors
 
 #### Getting Started (Week 1)
+
 - [ ] Read README.md and INTEGRATION_GUIDE.md
 - [ ] Set up development environment
 - [ ] Run test suite successfully
@@ -355,6 +393,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 - [ ] Join community chat
 
 #### Intermediate (Week 2-4)
+
 - [ ] Understand intent schema system
 - [ ] Explore groove extraction
 - [ ] Study chord progression analysis
@@ -362,6 +401,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 - [ ] Write first test
 
 #### Advanced (Month 2+)
+
 - [ ] Implement new feature
 - [ ] Write documentation
 - [ ] Review pull requests
@@ -371,6 +411,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 ### For Users
 
 #### Beginner Level
+
 - [ ] Install and run basic commands
 - [ ] Create first intent JSON
 - [ ] Generate simple MIDI file
@@ -378,6 +419,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 - [ ] Join user community
 
 #### Intermediate Level
+
 - [ ] Use custom groove templates
 - [ ] Create reharmonizations
 - [ ] Work with Ableton bridge
@@ -385,6 +427,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 - [ ] Share creations
 
 #### Advanced Level
+
 - [ ] Build custom integrations
 - [ ] Create teaching materials
 - [ ] Contribute to development
@@ -398,6 +441,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 ### Open Positions
 
 **Development**
+
 - [ ] Python developer (async/orchestration)
 - [ ] C++ developer (DSP/audio)
 - [ ] UI/UX designer
@@ -405,6 +449,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 - [ ] DevOps engineer
 
 **Community**
+
 - [ ] Community manager
 - [ ] Content creator
 - [ ] Music educator
@@ -412,6 +457,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 - [ ] Event organizer
 
 **Research**
+
 - [ ] Music therapist
 - [ ] Computational musicologist
 - [ ] ML/AI researcher
@@ -434,16 +480,19 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 ### Recent Decisions
 
 **2025-12-03: Bridge Architecture**
+
 - ✅ DECISION: Add `vulnerability` parameter to HarmonyPlan
 - ✅ RATIONALE: Tests and future features require emotional vulnerability tracking
 - ✅ IMPACT: All tests passing, enables richer emotional modeling
 
 **2025-12-03: Empty Progression Handling**
+
 - ✅ DECISION: Return early for empty progressions instead of error
 - ✅ RATIONALE: Graceful degradation better than crashes
 - ✅ IMPACT: More robust bridge API
 
 **2025-12-03: Guide Tones Feature**
+
 - ✅ DECISION: Make guide tones optional via parameter
 - ✅ RATIONALE: Not always wanted, users should control
 - ✅ IMPACT: More flexible MIDI generation
@@ -463,7 +512,7 @@ iDAW (Interrogate Before You DAW) is a merged repository combining:
 ### Getting Help
 
 - **Documentation**: See docs_music-brain/ and docs_penta-core/
-- **Issues**: https://github.com/sburdges-eng/iDAW/issues
+- **Issues**: <https://github.com/sburdges-eng/iDAW/issues>
 - **Discussions**: GitHub Discussions (coming soon)
 - **Email**: (to be added)
 
@@ -480,10 +529,12 @@ See LICENSE files for details.
 ## 🏆 Acknowledgments
 
 ### Contributors
+
 - Core team (list to be maintained)
 - Community contributors (list to be maintained)
 
 ### Inspiration
+
 - Brian Eno's Oblique Strategies
 - Music therapy research community
 - Lo-fi bedroom pop movement
@@ -513,6 +564,6 @@ See LICENSE files for details.
 
 ---
 
-**Last Updated**: 2025-12-03  
-**Next Review**: 2025-12-17  
+**Last Updated**: 2025-12-03
+**Next Review**: 2025-12-17
 **Maintained By**: Core Development Team

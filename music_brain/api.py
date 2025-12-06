@@ -296,6 +296,243 @@ async def get_emotion_category(base_emotion: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
+# =====================
+# Groove API Endpoints
+# =====================
+
+class GrooveRequest(BaseModel):
+    genre: str = "pop"
+    tempo: float = 120.0
+    swing: float = 0.0
+    humanize: float = 0.5
+
+@app.post("/groove/generate")
+async def generate_groove(request: GrooveRequest):
+    """Generate a groove pattern for the specified genre"""
+    try:
+        from music_brain.groove import GrooveTemplate
+
+        template = GrooveTemplate(
+            genre=request.genre,
+            tempo=request.tempo,
+            swing=request.swing
+        )
+
+        return {
+            "success": True,
+            "genre": request.genre,
+            "tempo": request.tempo,
+            "pattern": template.to_dict() if hasattr(template, 'to_dict') else {"name": request.genre},
+            "message": f"Generated {request.genre} groove at {request.tempo} BPM"
+        }
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/groove/genres")
+async def get_groove_genres():
+    """Get available groove genres"""
+    genres = [
+        "pop", "rock", "funk", "soul", "jazz", "hip_hop",
+        "electronic", "lo_fi", "indie", "folk", "country",
+        "metal", "punk", "reggae", "latin", "blues"
+    ]
+    return {"success": True, "genres": genres}
+
+
+# =====================
+# Harmony API Endpoints
+# =====================
+
+class HarmonyRequest(BaseModel):
+    key: str = "C"
+    mode: str = "major"
+    mood: Optional[str] = None
+    bars: int = 4
+
+@app.post("/harmony/suggest")
+async def suggest_harmony(request: HarmonyRequest):
+    """Suggest chord progressions based on key, mode, and mood"""
+    try:
+        from music_brain.session.generator import SongGenerator
+
+        generator = SongGenerator()
+        result = generator.suggest_progression(
+            mood=request.mood or "neutral",
+            key=request.key,
+            mode=request.mode,
+            bars=request.bars
+        )
+
+        return {
+            "success": True,
+            "suggestion": result,
+            "message": f"Suggested {request.bars}-bar progression in {request.key} {request.mode}"
+        }
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/harmony/progressions")
+async def get_progressions():
+    """Get common chord progressions database"""
+    try:
+        progressions_path = Path(__file__).parent / "data" / "common_progressions.json"
+        if progressions_path.exists():
+            with open(progressions_path) as f:
+                data = json.load(f)
+            return {"success": True, "progressions": data}
+
+        # Return basic progressions if file doesn't exist
+        return {
+            "success": True,
+            "progressions": {
+                "pop": ["I", "V", "vi", "IV"],
+                "sad": ["vi", "IV", "I", "V"],
+                "jazz": ["ii", "V", "I"],
+                "blues": ["I", "I", "I", "I", "IV", "IV", "I", "I", "V", "IV", "I", "V"],
+            }
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# =====================
+# Rule Breaking Endpoints
+# =====================
+
+@app.get("/rules/breaking")
+async def get_rule_breaking_options():
+    """Get available rule-breaking techniques"""
+    try:
+        from music_brain.session.intent_schema import RULE_BREAKING_EFFECTS
+
+        if 'RULE_BREAKING_EFFECTS' in dir():
+            return {"success": True, "rules": RULE_BREAKING_EFFECTS}
+
+        # Return default rule-breaking options
+        return {
+            "success": True,
+            "rules": {
+                "harmony": {
+                    "avoid_tonic_resolution": "Creates unresolved yearning",
+                    "parallel_fifths": "Adds raw, primitive power",
+                    "borrowed_chords": "Adds color and surprise"
+                },
+                "rhythm": {
+                    "constant_displacement": "Creates anxiety, restlessness",
+                    "tempo_drift": "Adds organic, human feel",
+                    "polyrhythm": "Creates complexity and tension"
+                },
+                "arrangement": {
+                    "buried_vocals": "Creates dissociation effect",
+                    "sudden_silence": "Creates shock and space",
+                    "wrong_instrument": "Creates unexpected emotion"
+                },
+                "production": {
+                    "pitch_imperfection": "Adds emotional honesty",
+                    "room_noise": "Creates intimacy",
+                    "distortion_on_clean": "Adds edge and rawness"
+                }
+            }
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+class RuleBreakRequest(BaseModel):
+    emotion: str
+    intensity: str = "moderate"
+
+@app.post("/rules/suggest")
+async def suggest_rule_break(request: RuleBreakRequest):
+    """Suggest rule-breaking techniques for an emotion"""
+    emotion_rules = {
+        "grief": ["avoid_tonic_resolution", "buried_vocals", "pitch_imperfection"],
+        "anger": ["parallel_fifths", "distortion_on_clean", "constant_displacement"],
+        "joy": ["sudden_silence", "tempo_drift", "borrowed_chords"],
+        "fear": ["constant_displacement", "sudden_silence", "room_noise"],
+        "love": ["pitch_imperfection", "borrowed_chords", "room_noise"],
+    }
+
+    suggestions = emotion_rules.get(request.emotion.lower(), ["borrowed_chords"])
+
+    return {
+        "success": True,
+        "emotion": request.emotion,
+        "suggestions": suggestions,
+        "message": f"Suggested {len(suggestions)} rule-breaking techniques for {request.emotion}"
+    }
+
+
+# =====================
+# Learning Module Endpoints
+# =====================
+
+@app.get("/learning/instruments")
+async def get_learning_instruments():
+    """Get available instruments for learning"""
+    try:
+        from music_brain.learning import INSTRUMENTS, get_beginner_instruments
+
+        beginner = get_beginner_instruments()
+        return {
+            "success": True,
+            "total": len(INSTRUMENTS),
+            "beginner_friendly": [i.name for i in beginner],
+            "all_instruments": [{"name": i.name, "family": i.family.value, "difficulty": i.difficulty.value} for i in INSTRUMENTS]
+        }
+    except ImportError:
+        return {
+            "success": True,
+            "instruments": ["piano", "guitar", "drums", "bass", "voice"],
+            "message": "Learning module not fully loaded"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/learning/curriculum/{instrument}")
+async def get_curriculum(instrument: str):
+    """Get learning curriculum for an instrument"""
+    try:
+        from music_brain.learning import CurriculumBuilder, get_instrument
+
+        inst = get_instrument(instrument)
+        if not inst:
+            raise HTTPException(status_code=404, detail=f"Instrument '{instrument}' not found")
+
+        builder = CurriculumBuilder()
+        curriculum = builder.build_curriculum(inst)
+
+        return {
+            "success": True,
+            "instrument": instrument,
+            "curriculum": curriculum.to_dict() if hasattr(curriculum, 'to_dict') else {"phases": []}
+        }
+    except ImportError:
+        return {
+            "success": True,
+            "instrument": instrument,
+            "curriculum": {
+                "phases": [
+                    {"name": "Basics", "weeks": 4},
+                    {"name": "Fundamentals", "weeks": 8},
+                    {"name": "Intermediate", "weeks": 12},
+                    {"name": "Advanced", "weeks": 16}
+                ]
+            },
+            "message": "Learning module not fully loaded"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000)
