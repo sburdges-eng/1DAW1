@@ -1,123 +1,24 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-pip-wheel-metadata/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-
-# Virtual environments
-venv/
-env/
-ENV/
-env.bak/
-venv.bak/
-
-# IDEs
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-*.sublime-project
-*.sublime-workspace
-
-# OS
-.DS_Store
-Thumbs.db
-._*
-
-# C++ Build artifacts
-*.o
-*.a
-*.dylib
-*.dll
-*.exe
-CMakeFiles/
-CMakeCache.txt
-cmake_install.cmake
-Makefile
-*.cmake
-!CMakeLists.txt
-compile_commands.json
-CTestTestfile.cmake
-Testing/
-
-# JUCE build artifacts
-JuceLibraryCode/
-Builds/
-
-# Temporary files
-*.tmp
+# Logs
+logs
 *.log
-*.bak
-*~
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# Test coverage
-.coverage
-htmlcov/
-.pytest_cache/
-.tox/
+node_modules
+dist
+dist-ssr
+*.local
 
-# Documentation builds
-docs/_build/
-docs/.doctrees/
-site/
-
-# Package manager
-node_modules/
-package-lock.json
-
-# Audio files (large binary files)
-*.wav
-*.mp3
-*.aiff
-*.flac
-*.m4a
-
-# MIDI files (if large sample libraries)
-# *.mid
-# *.midi
-
-# Compiled binaries
-*.out
-*.app
-
-# Archive files (use version control instead)
-*.zip
-
-# Rich text format files
-*.rtf
-
-# Perl modules (not relevant to this project)
-*.3pm
-*.5
-
-# Duplicate files with numbered suffixes
-*\ (1).*
-*\ (2).*
-*\ (3).*
-*\ (4).*
-*\ (5).*
-*\ (6).*
-*\ (7).*
-*\ (8).*
-*\ (9).*
-*\ (10).*
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

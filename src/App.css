@@ -95,6 +95,91 @@ button {
   margin-right: 5px;
 }
 
+/* App Layout Styles */
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.cassette-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 2px solid #396cd8;
+  margin-bottom: 20px;
+}
+
+.cassette-header h1 {
+  margin: 0;
+  font-size: 2em;
+}
+
+.toggle-btn {
+  font-size: 1.2em;
+  padding: 0.8em 1.5em;
+}
+
+.side-a,
+.side-b {
+  flex: 1;
+  padding: 20px;
+}
+
+.side-a h2,
+.side-b h2 {
+  margin-top: 0;
+  color: #396cd8;
+}
+
+.test-buttons {
+  margin-top: 20px;
+}
+
+.emotion-section,
+.ghostwriter-section,
+.interrogator-section {
+  margin: 30px 0;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.emotion-section h3,
+.ghostwriter-section h3,
+.interrogator-section h3 {
+  margin-top: 0;
+  color: #646cff;
+}
+
+.emotion-preview {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+.emotion-preview p {
+  margin: 5px 0;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     color: #f6f6f6;
@@ -112,5 +197,16 @@ button {
   }
   button:active {
     background-color: #0f0f0f69;
+  }
+
+  .emotion-section,
+  .ghostwriter-section,
+  .interrogator-section {
+    background-color: rgba(15, 15, 15, 0.5);
+    border-color: #444;
+  }
+
+  .emotion-preview {
+    background-color: rgba(255, 255, 255, 0.05);
   }
 }
