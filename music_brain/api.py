@@ -533,6 +533,147 @@ async def get_curriculum(instrument: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# =====================
+# Voice Synthesis Endpoints
+# =====================
+
+class VoiceProfile(BaseModel):
+    name: str = "Natural"
+    pitch: float = 0
+    formant: float = 0
+    breathiness: float = 20
+    vibrato: float = 30
+    warmth: float = 50
+
+class VoiceSynthRequest(BaseModel):
+    text: str
+    profile: VoiceProfile = VoiceProfile()
+    emotion: Optional[str] = None
+
+@app.post("/voice/synthesize")
+async def synthesize_voice(request: VoiceSynthRequest):
+    """Synthesize vocal audio from text with voice profile"""
+    try:
+        # Voice synthesis placeholder - would integrate with actual TTS/vocal synth
+        # For now, return a simulated response
+        import hashlib
+        import base64
+
+        # Create a unique identifier for this synthesis
+        text_hash = hashlib.md5(request.text.encode()).hexdigest()[:8]
+
+        # In production, this would call actual voice synthesis:
+        # - ElevenLabs API
+        # - Coqui TTS
+        # - VITS model
+        # - Custom vocal synthesis engine
+
+        # Simulate processing based on voice profile
+        voice_params = {
+            "pitch_shift": request.profile.pitch,
+            "formant_shift": request.profile.formant,
+            "breathiness": request.profile.breathiness / 100.0,
+            "vibrato_depth": request.profile.vibrato / 100.0,
+            "warmth_filter": request.profile.warmth / 100.0,
+        }
+
+        # Apply emotion modifiers if specified
+        emotion_mods = {}
+        if request.emotion:
+            emotion_effects = {
+                "grief": {"pitch_shift": -1, "breathiness": 0.5, "vibrato_depth": 0.15},
+                "anger": {"pitch_shift": 2, "breathiness": 0.1, "vibrato_depth": 0.05},
+                "joy": {"pitch_shift": 3, "breathiness": 0.2, "vibrato_depth": 0.4},
+                "longing": {"pitch_shift": 0, "breathiness": 0.35, "vibrato_depth": 0.25},
+                "peace": {"pitch_shift": -1, "breathiness": 0.3, "vibrato_depth": 0.2},
+            }
+            emotion_mods = emotion_effects.get(request.emotion, {})
+
+        return {
+            "success": True,
+            "text": request.text,
+            "voice_profile": request.profile.name,
+            "emotion": request.emotion,
+            "parameters_applied": {**voice_params, **emotion_mods},
+            "audio_url": None,  # Would be actual audio URL in production
+            "message": f"Voice synthesis request processed for '{request.profile.name}' profile",
+            "note": "Voice synthesis backend integration pending - this is a placeholder response"
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/voice/profiles")
+async def get_voice_profiles():
+    """Get available voice profiles"""
+    return {
+        "success": True,
+        "profiles": {
+            "natural": {
+                "name": "Natural",
+                "description": "Balanced, authentic vocal character",
+                "pitch": 0, "formant": 0, "breathiness": 20, "vibrato": 30, "warmth": 50
+            },
+            "intimate": {
+                "name": "Intimate",
+                "description": "Close, soft, personal feel",
+                "pitch": -2, "formant": -1, "breathiness": 40, "vibrato": 15, "warmth": 70
+            },
+            "powerful": {
+                "name": "Powerful",
+                "description": "Strong, bold, commanding",
+                "pitch": 2, "formant": 1, "breathiness": 10, "vibrato": 40, "warmth": 40
+            },
+            "ethereal": {
+                "name": "Ethereal",
+                "description": "Airy, floating, dreamlike",
+                "pitch": 5, "formant": 3, "breathiness": 50, "vibrato": 60, "warmth": 60
+            },
+            "raspy": {
+                "name": "Raspy",
+                "description": "Textured, gravelly, raw",
+                "pitch": -3, "formant": -2, "breathiness": 60, "vibrato": 20, "warmth": 30
+            },
+            "robotic": {
+                "name": "Robotic",
+                "description": "Mechanical, processed, synthetic",
+                "pitch": 0, "formant": 0, "breathiness": 0, "vibrato": 0, "warmth": 20
+            }
+        }
+    }
+
+
+@app.get("/voice/emotions")
+async def get_voice_emotions():
+    """Get emotional styles for voice synthesis"""
+    return {
+        "success": True,
+        "emotions": {
+            "grief": {
+                "description": "Fragile, breaking voice with catch in throat",
+                "adjustments": {"breathiness": 50, "vibrato": 15, "warmth": 60, "pitch": -1}
+            },
+            "anger": {
+                "description": "Tight, controlled tension with sharp edges",
+                "adjustments": {"breathiness": 10, "vibrato": 5, "warmth": 20, "pitch": 2}
+            },
+            "joy": {
+                "description": "Bright, lifted tone with natural energy",
+                "adjustments": {"breathiness": 20, "vibrato": 40, "warmth": 70, "pitch": 3}
+            },
+            "longing": {
+                "description": "Distant, reaching quality with ache",
+                "adjustments": {"breathiness": 35, "vibrato": 25, "warmth": 55, "pitch": 0}
+            },
+            "peace": {
+                "description": "Settled, grounded with gentle flow",
+                "adjustments": {"breathiness": 30, "vibrato": 20, "warmth": 65, "pitch": -1}
+            }
+        }
+    }
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000)

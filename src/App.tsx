@@ -7,6 +7,9 @@ import { Timeline } from "./components/Timeline";
 import { TransportControls } from "./components/TransportControls";
 import { InterrogatorChat } from "./components/InterrogatorChat";
 import { RuleBreaker } from "./components/RuleBreaker";
+import { EQ } from "./components/EQ";
+import { VocalSynth } from "./components/VocalSynth";
+import { MixConsole } from "./components/MixConsole";
 import "./App.css";
 
 function App() {
@@ -263,8 +266,14 @@ function App() {
             </div>
 
             {/* Mixer Panel */}
-            <div style={{ width: '350px', borderLeft: '1px solid rgba(255,255,255,0.1)' }}>
+            <div style={{ width: '350px', borderLeft: '1px solid rgba(255,255,255,0.1)', overflowY: 'auto' }}>
               <Mixer />
+              <div style={{ marginTop: '10px' }}>
+                <EQ channelName="Master" onEQChange={(bands) => console.log('EQ changed:', bands)} />
+              </div>
+              <div style={{ marginTop: '10px' }}>
+                <MixConsole channelName="Master" />
+              </div>
             </div>
           </div>
 
@@ -363,6 +372,18 @@ function App() {
                     sub: intent.specific_emotion || intent.base_emotion
                   });
                 }
+              }}
+            />
+          </div>
+
+          <div className="vocalsynth-section" style={{ marginTop: '20px', padding: '20px', border: '1px solid #ddd', borderRadius: '8px', backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
+            <h3>Vocal Synth</h3>
+            <VocalSynth
+              onVoiceChange={(profile) => {
+                console.log('Voice profile changed:', profile);
+              }}
+              onGenerate={(text, profile) => {
+                console.log('Generated vocal:', text, profile);
               }}
             />
           </div>
