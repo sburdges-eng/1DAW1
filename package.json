@@ -12,6 +12,8 @@
   "dependencies": {
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-opener": "^2",
+    "@tonejs/midi": "^2.0.28",
+    "tone": "^14.7.77",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },

@@ -7,7 +7,7 @@ edition = "2021"
 tauri = { version = "2.0", features = [] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-reqwest = { version = "0.11", features = ["json"] }
+reqwest = { version = "0.11", features = ["json", "blocking"] }
 tokio = { version = "1", features = ["full"] }
 cpal = "0.15"
 
@@ -17,3 +17,7 @@ tauri-build = { version = "2.0", features = [] }
 [lib]
 name = "idaw_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
+
+[[test]]
+name = "integration_test"
+path = "tests/integration_test.rs"

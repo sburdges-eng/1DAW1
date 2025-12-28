@@ -799,6 +799,15 @@ def generate_learning_plan(
     Generate a learning plan based on available resources.
 
     Returns a structured plan with recommended sources and timeline.
+
+    Args:
+        instrument: Name of the instrument
+        current_level: Current skill level (1-10, validated)
+        target_level: Target skill level (1-10, validated)
+        weekly_hours: Hours of practice per week
+
+    Raises:
+        ValueError: If current_level or target_level are outside 1-10 range
     """
     # Validate level ranges (1-10 for DifficultyLevel enum)
     if current_level < 1 or current_level > 10:
@@ -824,9 +833,16 @@ def generate_learning_plan(
             if s.get("difficulty_range", (1, 10))[0] <= level <= s.get("difficulty_range", (1, 10))[1]
         ]
 
+        # Safe conversion: level is guaranteed to be 1-10 due to validation above
+        try:
+            level_name = DifficultyLevel(level).name_friendly
+        except ValueError:
+            # Fallback (should never happen with validation, but defensive)
+            level_name = "Expert" if level > 10 else f"Level {level}"
+
         phase = {
             "level": level,
-            "level_name": DifficultyLevel(level).name_friendly if level <= 10 else "Expert",
+            "level_name": level_name,
             "focus_areas": [],
             "recommended_sources": level_sources[:3],
             "estimated_weeks": 4 + (level * 2),  # Rough estimate

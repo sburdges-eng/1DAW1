@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "idaw",
-  "version": "0.1.0",
-  "identifier": "com.kellysong.idaw",
+  "productName": "iDAW",
+  "version": "1.0.0",
+  "identifier": "com.idaw.app",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -12,24 +12,35 @@
   "app": {
     "windows": [
       {
-        "title": "idaw",
-        "width": 800,
-        "height": 600
+        "title": "iDAW - Intelligent Digital Audio Workstation",
+        "width": 1400,
+        "height": 900,
+        "minWidth": 1200,
+        "minHeight": 800,
+        "resizable": true,
+        "fullscreen": false
       }
     ],
     "security": {
       "csp": null
-    }
+    },
+    "withGlobalTauri": false
   },
   "bundle": {
     "active": true,
-    "targets": "all",
+    "targets": ["app"],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
-  }
+    ],
+    "resources": [],
+    "copyright": "Copyright © 2025 Sean Burdges. All rights reserved.",
+    "category": "Music",
+    "shortDescription": "Intelligent Digital Audio Workstation",
+    "longDescription": "iDAW combines real-time C++ audio processing with Python-based music intelligence and AI-assisted composition for intent-driven creative workflows."
+  },
+  "plugins": {}
 }

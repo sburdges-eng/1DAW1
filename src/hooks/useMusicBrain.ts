@@ -3,13 +3,17 @@ import { invoke } from '@tauri-apps/api/core';
 export interface EmotionalIntent {
   core_wound?: string;
   core_desire?: string;
-  emotional_intent: string;
+  emotional_intent?: string;  // Legacy field
   technical?: {
     key?: string;
     bpm?: number;
     progression?: string[];
     genre?: string;
   };
+  // New format: base_emotion, intensity, specific_emotion
+  base_emotion?: string;
+  intensity?: string;
+  specific_emotion?: string;
 }
 
 export interface GenerateRequest {
